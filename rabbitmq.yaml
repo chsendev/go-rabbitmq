@@ -1,0 +1,16 @@
+url: "amqp://test:123@192.168.0.111:5672//test"
+log:
+  level: info
+publisher:
+  retry:
+    enabled: false
+    initial_interval: 1
+    multiplier: 1
+    max_attempts: 3
+  confirm:
+    enabled: true
+    wait_milli: 2000
+  notify_return: false
+listener:
+  prefetch: 1
+  acknowledge_mode: auto
