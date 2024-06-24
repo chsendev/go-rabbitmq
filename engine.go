@@ -58,8 +58,7 @@ func (h *Engine) listen(msg <-chan *mq.Message, handlers HandlersChain) {
 
 	for {
 		select {
-		case d, ok := <-msg:
-			fmt.Println(ok)
+		case d, _ := <-msg:
 			go h.handle(d, handlers)
 		}
 	}

@@ -34,10 +34,10 @@ func TestName(t *testing.T) {
 	{
 		g.Listen("demo.queue1", f5, f6)
 	}
-	g2 := engine.Group(f7, f8)
-	{
-		g2.Listen("demo.queue2", f9)
-	}
+	//g2 := engine.Group(f7, f8)
+	//{
+	//	g2.Listen("demo.queue2", f9)
+	//}
 
 	fmt.Println("11233123")
 	//Listen("demo.queue1", lis).

@@ -1,6 +1,7 @@
 package mq
 
 import (
+	"fmt"
 	"github.com/cscoder0/go-rabbitmq/log"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"go.uber.org/zap"
@@ -8,36 +9,40 @@ import (
 )
 
 func Listen(queue string) (<-chan *Message, error) {
-	msg, client, err := listenMsg(queue)
-	if err != nil {
-		return nil, err
-	}
 	message := make(chan *Message)
 	go func() {
 		for {
-			select {
-			case d, ok := <-msg:
-				if ok {
-					raw := &rawMessage{Delivery: &d}
-					message <- &Message{
-						rawMessage:  raw,
-						acknowledge: getAcknowledge(raw),
+			msg, client, err := listenMsg(queue)
+			if err != nil {
+				continue
+			}
+		listenFor:
+			for {
+				fmt.Println("正在进入for循环")
+				select {
+				case d, ok := <-msg:
+					fmt.Println("111112312321")
+					if ok {
+						log.Debug("Receive a message", zap.Any("data", d))
+						raw := &rawMessage{Delivery: &d}
+						message <- &Message{
+							rawMessage:  raw,
+							acknowledge: getAcknowledge(raw),
+						}
+					} else {
+						log.Info("Receive a not ok message", zap.Any("data", d))
+						break listenFor
 					}
-				} else {
-					log.Info("Receive a not ok message", zap.Any("data", d))
-				}
-			case <-client.Channel.NotifyClose(make(chan *amqp.Error)):
-				//fmt.Println(123213)
-				log.Warn("channel already close")
-				time.Sleep(time.Second * 3)
-				reMsg, reClient, err := listenMsg(queue)
-				if err != nil {
-					log.Error("Re again listen failed", zap.Error(err))
-				} else {
-					msg = reMsg
-					client = reClient
+				case <-client.Channel.NotifyClose(make(chan *amqp.Error)):
+					log.Warn("channel already close")
+					break listenFor
 				}
 			}
+			fmt.Println("1111111111111111111111111")
+			fmt.Println("22222222222222222222222222")
+			fmt.Println("Retrying...")
+			log.Debug("Retrying...")
+			time.Sleep(time.Second * 3)
 		}
 	}()
 	return message, nil
