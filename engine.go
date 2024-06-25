@@ -124,7 +124,15 @@ func (h *Engine) Binding(exchange string, exchangeType mq.ExchangeType, queue st
 	if h.err != nil {
 		return h
 	}
-	err := mq.Binding(exchange, exchangeType, queue, bindingKey...)
+	err := mq.Binding(exchange, exchangeType, queue, nil, bindingKey...)
+	return h.returnErr(err)
+}
+
+func (h *Engine) BindingWithDelay(exchange string, exchangeType mq.ExchangeType, queue string, bindingKey ...string) *Engine {
+	if h.err != nil {
+		return h
+	}
+	err := mq.Binding(exchange, exchangeType, queue, map[string]any{"x-delayed-message": true}, bindingKey...)
 	return h.returnErr(err)
 }
 

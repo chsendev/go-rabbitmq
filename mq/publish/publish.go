@@ -56,6 +56,7 @@ func publish(ctx context.Context, d *Publisher, exchange, routingKey string, dat
 		d.mandatory, // mandatory
 		false,       // immediate
 		amqp.Publishing{
+			Headers:     d.headers,
 			ContentType: "application/json",
 			Body:        j,
 		})

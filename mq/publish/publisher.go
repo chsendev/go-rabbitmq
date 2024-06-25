@@ -22,10 +22,13 @@ type Publisher struct {
 	confirm   bool
 	mandatory bool
 	waitMilli time.Duration
+	// delayed 延迟消息时间
+	//delayed time.Duration
+	headers amqp.Table
 }
 
 func New(opt ...Opt) *Publisher {
-	p := &Publisher{options: opt}
+	p := &Publisher{options: opt, headers: make(map[string]any)}
 	return p
 }
 

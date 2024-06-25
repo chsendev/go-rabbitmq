@@ -16,6 +16,7 @@ func Listen(queue string) (<-chan *Message, error) {
 			if err != nil {
 				continue
 			}
+			closeCh := make(chan *amqp.Error)
 		listenFor:
 			for {
 				fmt.Println("正在进入for循环")
@@ -33,7 +34,7 @@ func Listen(queue string) (<-chan *Message, error) {
 						log.Info("Receive a not ok message", zap.Any("data", d))
 						break listenFor
 					}
-				case <-client.Channel.NotifyClose(make(chan *amqp.Error)):
+				case <-client.Channel.NotifyClose(closeCh):
 					log.Warn("channel already close")
 					break listenFor
 				}

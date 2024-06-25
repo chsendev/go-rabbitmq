@@ -1,5 +1,7 @@
 package mq
 
+import amqp "github.com/rabbitmq/amqp091-go"
+
 func Queue(queueName string) error {
 	client, err := CreateClient()
 	if err != nil {
@@ -27,10 +29,10 @@ func Exchange(exchangeName string, exchangeType ExchangeType) error {
 		return err
 	}
 	defer client.Close()
-	return exchange(client, exchangeName, exchangeType)
+	return exchange(client, exchangeName, exchangeType, nil)
 }
 
-func exchange(client *Client, exchange string, exchangeType ExchangeType) error {
+func exchange(client *Client, exchange string, exchangeType ExchangeType, args amqp.Table) error {
 	return client.Channel.ExchangeDeclare(
 		exchange,
 		string(exchangeType),
@@ -38,7 +40,7 @@ func exchange(client *Client, exchange string, exchangeType ExchangeType) error 
 		false,
 		false,
 		false,
-		nil,
+		args,
 	)
 }
 
@@ -67,7 +69,7 @@ func bindingKey(client *Client, exchange string, exchangeType ExchangeType, queu
 	return nil
 }
 
-func Binding(exchangeName string, exchangeType ExchangeType, queueName string, bindingKeyName ...string) error {
+func Binding(exchangeName string, exchangeType ExchangeType, queueName string, exchangeArgs amqp.Table, bindingKeyName ...string) error {
 	client, err := CreateClient()
 	if err != nil {
 		return err
@@ -76,7 +78,7 @@ func Binding(exchangeName string, exchangeType ExchangeType, queueName string, b
 	if err = queue(client, queueName); err != nil {
 		return err
 	}
-	if err = exchange(client, exchangeName, exchangeType); err != nil {
+	if err = exchange(client, exchangeName, exchangeType, exchangeArgs); err != nil {
 		return err
 	}
 	if err = bindingKey(client, exchangeName, exchangeType, queueName, bindingKeyName...); err != nil {

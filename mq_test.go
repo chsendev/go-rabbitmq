@@ -28,11 +28,16 @@ func TestName(t *testing.T) {
 	engine := New(getConfig()).
 		Binding("go-demo", mq.Direct, "demo.queue1", "q1").
 		Binding("go-demo", mq.Direct, "demo.queue2", "q2").
+		BindingWithDelay("go-demo2", mq.Direct, "demo.queue3", "q2").
 		Use(f1).Use(f2)
 
 	g := engine.Group(f3, f4)
 	{
 		g.Listen("demo.queue1", f5, f6)
+	}
+	g2 := engine.Group(f3, f4)
+	{
+		g2.Listen("demo.queue3", f5, f6)
 	}
 	//g2 := engine.Group(f7, f8)
 	//{
@@ -66,15 +71,6 @@ func f5(ctx *Context) error {
 func f6(ctx *Context) error {
 	return nil
 }
-func f7(ctx *Context) error {
-	return nil
-}
-func f8(ctx *Context) error {
-	return nil
-}
-func f9(ctx *Context) error {
-	return nil
-}
 
 func TestPublish(t *testing.T) {
 	m := make(map[string]any)
@@ -95,40 +91,40 @@ func TestPublish(t *testing.T) {
 	//if err := publish.New().Publish(context.Background(), "go-demo", "q2", m).Error(); err != nil {
 	//	fmt.Println(err)
 	//}
-	publish.ListenNotifyReturn(func(a *amqp.Return) {
-		fmt.Println(a)
-	})
-	if err := publish.New().Publish(context.Background(), "go-demo", "q11", m).Error(); err != nil {
+	//publish.ListenNotifyReturn(func(a *amqp.Return) {
+	//	fmt.Println(a)
+	//})
+	//if err := publish.New(publish.WithDelay(time.Second*5)).Publish(context.Background(), "go-demo", "q11", m).Error(); err != nil {
+	//	fmt.Println(err)
+	//}
+	//fmt.Println(1)
+	if err := publish.New().Publish(context.Background(), "go-demo2", "q2", m).Error(); err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(1)
-	if err := publish.New().Publish(context.Background(), "go-demo", "q12", m).Error(); err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(1)
-	if err := publish.New().Publish(context.Background(), "go-demo", "q13", m).Error(); err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(1)
-	if err := publish.New().Publish(context.Background(), "go-demo", "q14", m).Error(); err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(1)
-	if err := publish.New().Publish(context.Background(), "go-demo", "q15", m).Error(); err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(1)
-	if err := publish.New().Publish(context.Background(), "go-demo", "q16", m).Error(); err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(1)
-	if err := publish.New().Publish(context.Background(), "go-demo", "q17", m).Error(); err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(1)
-	if err := publish.New().Publish(context.Background(), "go-demo", "q18", m).Error(); err != nil {
-		fmt.Println(err)
-	}
+	//fmt.Println(1)
+	//if err := publish.New().Publish(context.Background(), "go-demo", "q13", m).Error(); err != nil {
+	//	fmt.Println(err)
+	//}
+	//fmt.Println(1)
+	//if err := publish.New().Publish(context.Background(), "go-demo", "q14", m).Error(); err != nil {
+	//	fmt.Println(err)
+	//}
+	//fmt.Println(1)
+	//if err := publish.New().Publish(context.Background(), "go-demo", "q15", m).Error(); err != nil {
+	//	fmt.Println(err)
+	//}
+	//fmt.Println(1)
+	//if err := publish.New().Publish(context.Background(), "go-demo", "q16", m).Error(); err != nil {
+	//	fmt.Println(err)
+	//}
+	//fmt.Println(1)
+	//if err := publish.New().Publish(context.Background(), "go-demo", "q17", m).Error(); err != nil {
+	//	fmt.Println(err)
+	//}
+	//fmt.Println(1)
+	//if err := publish.New().Publish(context.Background(), "go-demo", "q18", m).Error(); err != nil {
+	//	fmt.Println(err)
+	//}
 	//if err := publish.New(publish.NotifyReturn()).Publish(context.Background(), "go-demo", "q3", m).Error(); err != nil {
 	//	fmt.Println(err)
 	//}
