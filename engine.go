@@ -132,7 +132,7 @@ func (h *Engine) BindingWithDelay(exchange string, exchangeType mq.ExchangeType,
 	if h.err != nil {
 		return h
 	}
-	err := mq.Binding(exchange, exchangeType, queue, map[string]any{"x-delayed-message": true}, bindingKey...)
+	err := mq.Binding(exchange, "x-delayed-message", queue, map[string]any{"x-delayed-type": string(exchangeType)}, bindingKey...)
 	return h.returnErr(err)
 }
 

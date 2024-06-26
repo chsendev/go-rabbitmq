@@ -7,4 +7,5 @@ const (
 	Fanout  ExchangeType = "fanout"
 	Direct  ExchangeType = "direct"
 	Topic   ExchangeType = "topic"
+	Delay   ExchangeType = "x-delayed-message"
 )

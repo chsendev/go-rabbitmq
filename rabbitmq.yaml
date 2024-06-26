@@ -1,4 +1,4 @@
-url: "amqp://test:123@192.168.25.110:5672//test"
+url: "amqp://test:123@127.0.0.1:5672//test"
 log:
   level: info
 publisher:
@@ -8,7 +8,7 @@ publisher:
     multiplier: 1
     max_attempts: 3
   confirm:
-    enabled: true
+    enabled: false
     wait_milli: 2000
   notify_return: false
 listener:

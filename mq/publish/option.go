@@ -44,7 +44,7 @@ func (c *notifyReturnOpt) Do() Opt {
 
 func WithDelay(delayed time.Duration) Opt {
 	return func(publisher *Publisher) error {
-		publisher.headers["x-delay"] = delayed / time.Millisecond
+		publisher.headers["x-delay"] = int(delayed / time.Millisecond)
 		return nil
 	}
 }
