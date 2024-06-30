@@ -33,17 +33,17 @@ rmq.Init("amqp://test:123@127.0.0.1:5672//test")
 // 与demo.queue1队列进行绑定，binding key为q1
 // 与demo.queue2队列进行绑定，binding key为q2、q3
 engine := rmq.New().
-Binding("go-demo", mq.Direct, "demo.queue1", "q1")
-Binding("go-demo", mq.Direct, "demo.queue2", "q2", "q3")
+   Binding("go-demo", mq.Direct, "demo.queue1", "q1")
+   Binding("go-demo", mq.Direct, "demo.queue2", "q2", "q3")
 ```
 
 **方式二**
 
 ```go
 engine := rmq.New().
-Exchange("test.direct", mq.Direct). // 声明交换机
-Queue("test.queue1").  // 声明队列
-BindingKey("k1", "k2") // 声明test.direct和test.queue1的binging key
+   Exchange("test.direct", mq.Direct). // 声明交换机
+   Queue("test.queue1").  // 声明队列
+   BindingKey("k1", "k2") // 声明test.direct和test.queue1的binging key
 ```
 
 1. 可只声明某个交换机或者某个队列
@@ -53,11 +53,11 @@ BindingKey("k1", "k2") // 声明test.direct和test.queue1的binging key
 
 ```go
 engine.Listen("test.queue1", func (ctx *rmq.Context) error {
-var u User
-if err := ctx.ShouldBind(&u); err != nil {
-return err
-}
-/// ...
+   var u User
+   if err := ctx.ShouldBind(&u); err != nil {
+	   return err
+   }
+   /// ...
 })
 ```
 
@@ -65,7 +65,7 @@ return err
 
 ```go
 if engine.Error() != nil {
-panic(engine.Error())
+    panic(engine.Error())
 }
 ```
 
@@ -76,7 +76,7 @@ m := make(map[string]any)
 m["name"] = "jack"
 m["age"] = "10"
 if err := rmq.Publish(context.Background(), "go-demo", "q1", m).Error(); err != nil {
-fmt.Println(err)
+    fmt.Println(err)
 }
 ```
 
