@@ -136,7 +136,7 @@ rmq.Init("amqp://test:123@127.0.0.1:5672//test", rmq.WithRetry(time.Second, 2, 3
 	rmq.ListenNotifyReturn(func(msg *amqp.Return) {
 		fmt.Println(msg)
 	})
-	if err := rmq.Publish(context.Background(), "go-demo123", "q1", m, publish.WithNotifyReturn()); err != nil {
+   if err := rmq.Publish(context.Background(), "go-demo123", "q1", m, publish.WithNotifyReturn()); err != nil {
 		panic(err)
 	}
     ```
@@ -146,16 +146,16 @@ rmq.Init("amqp://test:123@127.0.0.1:5672//test", rmq.WithRetry(time.Second, 2, 3
 框架默认提供了三种策略：none、auto、manual，如果设置manual，需要开发者手动调用ctx.Ack进行Ack
 
 ```go
- rmq.Init("amqp://test:123@127.0.0.1:5672//test", rmq.WithAckMode(config.AcknowledgeModeManual))
+rmq.Init("amqp://test:123@127.0.0.1:5672//test", rmq.WithAckMode(config.AcknowledgeModeManual))
 engine := rmq.New().Binding("go-demo", mq.Direct, "demo.queue1", "q1")
 engine.Listen("demo.queue1", func (ctx *rmq.Context) error {
-// ...
-err := ctx.Ack() // 或ctx.Nack()
-// ...
+   // ...
+   err := ctx.Ack() // 或ctx.Nack()
+   // ...
 })
 
 if engine.Error() != nil {
-panic(engine.Error())
+    panic(engine.Error())
 }
 ```
 
