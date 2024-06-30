@@ -13,7 +13,7 @@
 
 # 安装
 ```shell
-go get github.com/ChsenDev/go-rabbitmq
+go get github.com/chsendev/go-rabbitmq
 ```
 
 # 基础功能

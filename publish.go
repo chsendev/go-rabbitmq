@@ -2,7 +2,7 @@ package rmq
 
 import (
 	"context"
-	"github.com/ChsenDev/go-rabbitmq/mq/publish"
+	"github.com/chsendev/go-rabbitmq/mq/publish"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 

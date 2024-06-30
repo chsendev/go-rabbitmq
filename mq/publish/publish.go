@@ -3,7 +3,7 @@ package publish
 import (
 	"context"
 	"encoding/json"
-	"github.com/ChsenDev/go-rabbitmq/log"
+	"github.com/chsendev/go-rabbitmq/log"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	amqp "github.com/rabbitmq/amqp091-go"

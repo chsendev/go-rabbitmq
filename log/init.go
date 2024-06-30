@@ -1,7 +1,7 @@
 package log
 
 import (
-	"github.com/ChsenDev/go-rabbitmq/config"
+	"github.com/chsendev/go-rabbitmq/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

@@ -1,6 +1,6 @@
 package mq
 
-import "github.com/ChsenDev/go-rabbitmq/config"
+import "github.com/chsendev/go-rabbitmq/config"
 
 type acknowledge interface {
 	Ack() error

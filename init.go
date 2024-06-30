@@ -1,8 +1,8 @@
 package rmq
 
 import (
-	"github.com/ChsenDev/go-rabbitmq/config"
-	"github.com/ChsenDev/go-rabbitmq/log"
+	"github.com/chsendev/go-rabbitmq/config"
+	"github.com/chsendev/go-rabbitmq/log"
 	"sync"
 )
 

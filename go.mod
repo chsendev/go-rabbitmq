@@ -1,4 +1,4 @@
-module github.com/ChsenDev/go-rabbitmq
+module github.com/chsendev/go-rabbitmq
 
 go 1.22.2
 

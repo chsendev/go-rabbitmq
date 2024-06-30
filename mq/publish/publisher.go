@@ -2,8 +2,8 @@ package publish
 
 import (
 	"context"
-	"github.com/ChsenDev/go-rabbitmq/log"
-	"github.com/ChsenDev/go-rabbitmq/mq"
+	"github.com/chsendev/go-rabbitmq/log"
+	"github.com/chsendev/go-rabbitmq/mq"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"go.uber.org/zap"
 	"sync"

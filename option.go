@@ -1,7 +1,7 @@
 package rmq
 
 import (
-	"github.com/ChsenDev/go-rabbitmq/config"
+	"github.com/chsendev/go-rabbitmq/config"
 	"time"
 )
 

@@ -1,7 +1,7 @@
 package mq
 
 import (
-	"github.com/ChsenDev/go-rabbitmq/config"
+	"github.com/chsendev/go-rabbitmq/config"
 )
 
 var DefaultOpts = []Option{new(qosOpt)}
