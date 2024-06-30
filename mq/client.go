@@ -1,7 +1,8 @@
 package mq
 
 import (
-	"github.com/cscoder0/go-rabbitmq/config"
+	"github.com/ChsenDev/go-rabbitmq/config"
+	"github.com/ChsenDev/go-rabbitmq/log"
 	"github.com/pkg/errors"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"time"
@@ -23,18 +24,18 @@ func (i *Client) Close() {
 }
 
 func CreateClient() (*Client, error) {
-	if config.Conf.Publisher.Retry != nil && config.Conf.Publisher.Retry.Enabled {
-		wait := config.Conf.Publisher.Retry.InitialInterval
-		for i := 0; i < config.Conf.Publisher.Retry.MaxAttempts; i++ {
+	if config.Conf.Retry != nil {
+		wait := config.Conf.Retry.InitialInterval
+		for i := 0; i < config.Conf.Retry.MaxAttempts; i++ {
 			instance, err := createClient()
-			if err != nil {
-				return nil, err
-			}
 			if instance != nil {
 				return instance, nil
 			}
-			time.Sleep(time.Second * time.Duration(wait))
-			wait = wait * config.Conf.Publisher.Retry.Multiplier
+			if err != nil {
+				log.Error(err.Error())
+			}
+			time.Sleep(wait)
+			wait = wait * time.Duration(config.Conf.Retry.Multiplier)
 		}
 		return nil, errors.New("Connect failed")
 	} else {

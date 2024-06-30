@@ -1,8 +1,8 @@
 package mq
 
 import (
-	"github.com/cscoder0/go-rabbitmq/config"
-	"github.com/cscoder0/go-rabbitmq/log"
+	"github.com/ChsenDev/go-rabbitmq/config"
+	"github.com/ChsenDev/go-rabbitmq/log"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"go.uber.org/zap"
 	"sync"

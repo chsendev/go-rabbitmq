@@ -1,6 +1,6 @@
 package mq
 
-import "github.com/cscoder0/go-rabbitmq/config"
+import "github.com/ChsenDev/go-rabbitmq/config"
 
 type acknowledge interface {
 	Ack() error
@@ -29,13 +29,14 @@ func (a *acknowledgeAuto) Nack() error {
 }
 
 type acknowledgeManual struct {
+	*rawMessage
 }
 
 func (a *acknowledgeManual) Ack() error {
-	return nil
+	return a.rawMessage.Ack(false)
 }
 func (a *acknowledgeManual) Nack() error {
-	return nil
+	return a.rawMessage.Nack(false, true)
 }
 
 func isAutoAck() bool {
@@ -53,7 +54,7 @@ func getAcknowledge(msg *rawMessage) acknowledge {
 	} else if config.Conf.Listener.AcknowledgeMode == config.AcknowledgeModeAuto {
 		return &acknowledgeAuto{rawMessage: msg}
 	} else if config.Conf.Listener.AcknowledgeMode == config.AcknowledgeModeManual {
-		return &acknowledgeManual{}
+		return &acknowledgeManual{rawMessage: msg}
 	} else {
 		return &acknowledgeNone{}
 	}

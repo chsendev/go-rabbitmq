@@ -1,10 +1,12 @@
 package config
 
+import "time"
+
 type RabbitmqConfig struct {
-	Url       string     `mapstructure:"url"`
-	Log       *log       `mapstructure:"log"`
-	Publisher *publisher `mapstructure:"publisher"`
-	Listener  *listener  `mapstructure:"listener"`
+	Url      string    `mapstructure:"url"`
+	Log      *log      `mapstructure:"log"`
+	Retry    *retry    `mapstructure:"retry"`
+	Listener *listener `mapstructure:"listener"`
 }
 
 type AcknowledgeMode string
@@ -24,27 +26,26 @@ type listener struct {
 	AcknowledgeMode AcknowledgeMode `mapstructure:"acknowledge_mode"`
 }
 
-type publisher struct {
-	Retry        *retry   `mapstructure:"retry"`
-	Confirm      *confirm `mapstructure:"confirm"`
-	NotifyReturn bool     `mapstructure:"notify_return"`
-}
-
 type retry struct {
-	Enabled bool `mapstructure:"enabled"`
-	// InitialInterval 单位秒
-	InitialInterval int `mapstructure:"initial_interval"`
-	Multiplier      int `mapstructure:"multiplier"`
-	MaxAttempts     int `json:"max_attempts"`
-}
-
-type confirm struct {
-	Enabled   bool `mapstructure:"enabled"`
-	WaitMilli int  `mapstructure:"wait_milli"`
+	InitialInterval time.Duration `mapstructure:"initial_interval"`
+	Multiplier      int           `mapstructure:"multiplier"`
+	MaxAttempts     int           `json:"max_attempts"`
 }
 
 var Conf *RabbitmqConfig
 
-func Init(c *RabbitmqConfig) {
-	Conf = c
+func init() {
+	Conf = new(RabbitmqConfig)
+	Conf.Retry = &retry{
+		InitialInterval: time.Second,
+		Multiplier:      2,
+		MaxAttempts:     3,
+	}
+	Conf.Listener = &listener{
+		Prefetch:        1,
+		AcknowledgeMode: AcknowledgeModeAuto,
+	}
+	Conf.Log = &log{
+		Level: "info",
+	}
 }

@@ -3,7 +3,8 @@ package publish
 import (
 	"context"
 	"encoding/json"
-	"github.com/cscoder0/go-rabbitmq/log"
+	"github.com/ChsenDev/go-rabbitmq/log"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"go.uber.org/zap"
@@ -50,6 +51,7 @@ func publish(ctx context.Context, d *Publisher, exchange, routingKey string, dat
 	if err != nil {
 		return nil, err
 	}
+
 	return d.Client.Channel.PublishWithDeferredConfirm(
 		exchange,    // exchange
 		routingKey,  // routing key
@@ -59,6 +61,7 @@ func publish(ctx context.Context, d *Publisher, exchange, routingKey string, dat
 			Headers:     d.headers,
 			ContentType: "application/json",
 			Body:        j,
+			MessageId:   uuid.NewString(),
 		})
 }
 

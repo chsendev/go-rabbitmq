@@ -2,10 +2,9 @@ package rmq
 
 import (
 	"context"
-	"fmt"
-	"github.com/cscoder0/go-rabbitmq/config"
-	"github.com/cscoder0/go-rabbitmq/log"
-	"github.com/cscoder0/go-rabbitmq/mq"
+	"github.com/ChsenDev/go-rabbitmq/config"
+	"github.com/ChsenDev/go-rabbitmq/log"
+	"github.com/ChsenDev/go-rabbitmq/mq"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"sync"
@@ -22,11 +21,10 @@ type Engine struct {
 	handlerMap map[string]HandlersChain
 }
 
-func New(conf *config.RabbitmqConfig) *Engine {
-	Init(conf)
+func New() *Engine {
 	var h Engine
 	h.poll.New = func() any {
-		return &Context{Ctx: context.Background()}
+		return &Context{}
 	}
 	h.handlerMap = make(map[string]HandlersChain)
 	h.RouterGroup = &RouterGroup{Engine: &h}
@@ -37,55 +35,27 @@ func (h *Engine) addHandlers(queue string, handlers HandlersChain) {
 	if h.err != nil {
 		return
 	}
-	_, has := h.handlerMap[queue]
-	if has {
-		panic(fmt.Errorf("queue %s already exists", queue))
+	if config.Conf.Listener.AcknowledgeMode == config.AcknowledgeModeAuto {
+		handlers = append(handlers, AutoAck)
 	}
 	h.handlerMap[queue] = handlers
-	msg, err := mq.Listen(queue)
-	if err != nil {
-		h.err = err
-	}
-	go h.listen(msg, handlers)
-}
-
-func (h *Engine) listen(msg <-chan *mq.Message, handlers HandlersChain) {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Error("handle panic", zap.Any("error", err))
-		}
-	}()
-
-	for {
-		select {
-		case d, _ := <-msg:
-			go h.handle(d, handlers)
-		}
-	}
+	mq.Listen(queue, func(msg *mq.Message) {
+		h.handle(msg, handlers)
+	})
 }
 
 func (h *Engine) handle(msg *mq.Message, chain HandlersChain) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Error("handle panic", zap.Any("error", err))
-			if err := msg.Nack(); err != nil {
-				log.Error("nack err", zap.Error(err))
-			}
-		} else {
-			if err := msg.Ack(); err != nil {
-				log.Error("ack err", zap.Error(err))
-			}
 		}
 	}()
-	log.Debug("Received a message", zap.Any("data", msg))
 	c := h.poll.Get().(*Context)
+	c.reset()
 	c.msg = msg
-	for _, handle := range chain {
-		err := handle(c) // todo error
-		if err != nil {
-			msg.Nack()
-		}
-	}
+	c.ctx = context.Background()
+	c.handlers = chain
+	c.Next()
 	h.poll.Put(c)
 }
 
@@ -134,6 +104,23 @@ func (h *Engine) BindingWithDelay(exchange string, exchangeType mq.ExchangeType,
 	}
 	err := mq.Binding(exchange, "x-delayed-message", queue, map[string]any{"x-delayed-type": string(exchangeType)}, bindingKey...)
 	return h.returnErr(err)
+}
+
+// AutoAck auto ack
+func AutoAck(ctx *Context) error {
+	var err error
+	if len(ctx.handlerErrs) > 0 {
+		log.Debug("nack message", zap.Any("data", ctx.msg))
+		if err = ctx.Nack(); err != nil {
+			log.Error("nack err", zap.Error(err))
+		}
+	} else {
+		log.Debug("ack message", zap.Any("data", ctx.msg))
+		if err = ctx.Ack(); err != nil {
+			log.Error("ack err", zap.Error(err))
+		}
+	}
+	return err
 }
 
 func (h *Engine) Error() error {

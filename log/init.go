@@ -1,7 +1,7 @@
 package log
 
 import (
-	"github.com/cscoder0/go-rabbitmq/config"
+	"github.com/ChsenDev/go-rabbitmq/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -25,6 +25,8 @@ func Init() {
 		level = zapcore.InfoLevel
 	}
 	zapConfig.Level = zap.NewAtomicLevelAt(level)
+
+	zapConfig.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05")
 	logger, _ = zapConfig.Build(zap.AddCallerSkip(1))
 }
 
@@ -49,7 +51,6 @@ func DPanic(msg string, fields ...zap.Field) {
 }
 
 func Panic(msg string, fields ...zap.Field) {
-	//logger.
 	logger.Panic(msg, fields...)
 }
 

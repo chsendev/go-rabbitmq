@@ -2,8 +2,8 @@ package publish
 
 import (
 	"context"
-	"github.com/cscoder0/go-rabbitmq/log"
-	"github.com/cscoder0/go-rabbitmq/mq"
+	"github.com/ChsenDev/go-rabbitmq/log"
+	"github.com/ChsenDev/go-rabbitmq/mq"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"go.uber.org/zap"
 	"sync"
@@ -13,7 +13,7 @@ import (
 var once sync.Once
 var notifyReturn chan amqp.Return
 
-type Opt func(*Publisher) error
+type Opt func(*Publisher)
 
 type Publisher struct {
 	Client    *mq.Client
@@ -22,9 +22,7 @@ type Publisher struct {
 	confirm   bool
 	mandatory bool
 	waitMilli time.Duration
-	// delayed 延迟消息时间
-	//delayed time.Duration
-	headers amqp.Table
+	headers   amqp.Table
 }
 
 func New(opt ...Opt) *Publisher {
@@ -44,17 +42,6 @@ func (p *Publisher) Error() error {
 	return p.err
 }
 
-func (p *Publisher) doDefaultOpt() error {
-	for _, option := range defaultOpts {
-		if option.Enabled() {
-			if err := option.Do()(p); err != nil {
-				return err
-			}
-		}
-	}
-	return nil
-}
-
 func (p *Publisher) Publish(ctx context.Context, exchange, routingKey string, data any) *Publisher {
 	if p.err != nil {
 		return p
@@ -65,13 +52,8 @@ func (p *Publisher) Publish(ctx context.Context, exchange, routingKey string, da
 		return p.returnErr(err)
 	}
 	defer p.Client.Close()
-	if err = p.doDefaultOpt(); err != nil {
-		return p.returnErr(err)
-	}
 	for _, opt := range p.options {
-		if err = opt(p); err != nil {
-			return p.returnErr(err)
-		}
+		opt(p)
 	}
 	return p.returnErr(getPublish(p).Publish(ctx, exchange, routingKey, data))
 }

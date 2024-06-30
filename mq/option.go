@@ -1,10 +1,10 @@
 package mq
 
 import (
-	"github.com/cscoder0/go-rabbitmq/config"
+	"github.com/ChsenDev/go-rabbitmq/config"
 )
 
-var defaultOpts = []Option{new(qosOpt)}
+var DefaultOpts = []Option{new(qosOpt)}
 
 type Opt func(*Client) error
 
