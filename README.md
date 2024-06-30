@@ -7,7 +7,7 @@
 - 消息多拦截器
 - 延迟消息
 - 统一消息处理
-- 消费端断开重连
+- 消费者断开重连
 - 内置连接池
 - ...
 
@@ -113,10 +113,9 @@ rmq.Init("amqp://test:123@127.0.0.1:5672//test", rmq.WithLogLevel("debug"))
 ## 连接重试策略
 
 当与rabbitmq通行的channel断开链接时，框架内部会进行重试。
-
-initialInterval(默认1s)：失败后的初始等待时间
-multiplier(默认2)：失败后下次的等待时长倍数，下次等待时长 = initialInterval * multiplier
-maxAttempts(默认3)：最大重试次数
+- initialInterval(默认1s)：失败后的初始等待时间
+- multiplier(默认2)：失败后下次的等待时长倍数，下次等待时长 = initialInterval * multiplier
+- maxAttempts(默认3)：最大重试次数
 
 ```go
 rmq.Init("amqp://test:123@127.0.0.1:5672//test", rmq.WithRetry(time.Second, 2, 3))
