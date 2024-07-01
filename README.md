@@ -253,3 +253,32 @@ func TestPublishDelay(t *testing.T) {
 	log.Println("publish message: ", msg)
 }
 ```
+
+## 自定义消息头
+消息头如同HTTP请求头，生产者在发送消息时附加，消费者可从中获取额外信息，增强消息传递的灵活性和数据描述的丰富性。
+```go
+func TestHeaderReceive(t *testing.T) {
+	rmq.Init("amqp://test:123@127.0.0.1:5672//test", rmq.WithAckMode(config.AcknowledgeModeAuto), rmq.WithLogLevel("debug"))
+	engine := rmq.New().Binding("go-demo", mq.Direct, "demo.queue1", "q1")
+	engine.Listen("demo.queue1", func(ctx *rmq.Context) error {
+		var u string
+		if err := ctx.ShouldBind(&u); err != nil {
+			return err
+		}
+		fmt.Println(u)
+		fmt.Println(ctx.GetHeader("my-header"))
+		return nil
+	})
+	if engine.Error() != nil {
+		panic(engine.Error())
+	}
+	time.Sleep(time.Hour)
+}
+
+func TestHeaderPublish(t *testing.T) {
+	u := &User{Name: "jack"}
+	rmq.Init("amqp://test:123@127.0.0.1:5672//test", rmq.WithAckMode(config.AcknowledgeModeNone))
+	err := rmq.Publish(context.Background(), "go-demo", "q1", u, publish.WithHeaders(map[string]any{"my-header": "hello"}))
+	fmt.Println(err)
+}
+```

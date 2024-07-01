@@ -22,3 +22,11 @@ func WithDelay(delayed time.Duration) Opt {
 		p.headers["x-delay"] = int(delayed / time.Millisecond)
 	}
 }
+
+func WithHeaders(headers map[string]any) Opt {
+	return func(p *Publisher) {
+		for k, v := range headers {
+			p.headers[k] = v
+		}
+	}
+}

@@ -26,6 +26,10 @@ type Context struct {
 	handlerErrs []error
 }
 
+func (c *Context) GetHeader(key string) any {
+	return c.msg.Headers[key]
+}
+
 func (c *Context) GetMessageId() string {
 	return c.msg.MessageId
 }
