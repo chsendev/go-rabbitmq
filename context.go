@@ -1,6 +1,5 @@
 package rmq
 
-import "C"
 import (
 	"context"
 	"github.com/chsendev/go-rabbitmq/binding"

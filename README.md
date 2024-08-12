@@ -33,7 +33,7 @@ rmq.Init("amqp://test:123@127.0.0.1:5672//test")
 // 与demo.queue1队列进行绑定，binding key为q1
 // 与demo.queue2队列进行绑定，binding key为q2、q3
 engine := rmq.New().
-   Binding("go-demo", mq.Direct, "demo.queue1", "q1")
+   Binding("go-demo", mq.Direct, "demo.queue1", "q1").
    Binding("go-demo", mq.Direct, "demo.queue2", "q2", "q3")
 ```
 

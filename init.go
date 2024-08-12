@@ -17,3 +17,7 @@ func Init(url string, opt ...Opt) {
 		log.Init()
 	})
 }
+
+func SetLog(l log.Log) {
+	log.SetLog(l)
+}

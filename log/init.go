@@ -6,7 +6,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var logger *zap.Logger
+var logger Log
 
 var logLevel = map[string]zapcore.Level{
 	"debug":  zapcore.DebugLevel,
@@ -30,6 +30,10 @@ func Init() {
 	logger, _ = zapConfig.Build(zap.AddCallerSkip(1))
 }
 
+func SetLog(log Log) {
+	logger = log
+}
+
 func Debug(msg string, fields ...zap.Field) {
 	logger.Debug(msg, fields...)
 }
@@ -44,16 +48,4 @@ func Warn(msg string, fields ...zap.Field) {
 
 func Error(msg string, fields ...zap.Field) {
 	logger.Error(msg, fields...)
-}
-
-func DPanic(msg string, fields ...zap.Field) {
-	logger.DPanic(msg, fields...)
-}
-
-func Panic(msg string, fields ...zap.Field) {
-	logger.Panic(msg, fields...)
-}
-
-func Fatal(msg string, fields ...zap.Field) {
-	logger.Fatal(msg, fields...)
 }
